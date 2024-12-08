@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Text Rewriter</title>
+  <style>
+    body {
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+
+    textarea {
+      padding: 16px;
+    }
+
+    button {
+      padding: 12px 0;
+      font-weight: bold;
+      margin-top: 8px;
+      font-size: large;
+
+    }
+    #container {
+      width: 50%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      background-color: white;
+      min-height: 100vh;
+      padding: 8px 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <h1>Text Rewriter</h1>
+    <textarea id="reviewText" rows="10" cols="150" placeholder="Enter your text here..."></textarea>
+    <button id="analyzeButton">Analyze</button>
+    <p id="rewriteText"></p>
+  </div>
+  <script>
+    const today = new Date().toISOString().slice(0, 10);
+    const analyzeButton = document.getElementById("analyzeButton");
+    const reviewText = document.getElementById("reviewText");
+    const rewriteText = document.getElementById("rewriteText");
+    let nanoAPI;
+
+    const config = {
+       context: 'You are a content writing expert, help me rewrite this text.',
+       sharedContext: 'You are a expert content writer.'
+    }
+
+    function loadingAnimationForButton(disabled = false) {
+      analyzeButton.textContent = disabled ? "Analyzing..." : "Analyze";
+      analyzeButton.disabled = disabled;
+    }
+
+    async function textRewriter(text) {
+      loadingAnimationForButton(true);
+      const result = await nanoAPI.rewrite(text, {
+        context: config.context,
+      });
+      rewriteText.textContent = result;
+      loadingAnimationForButton(false);
+      // console.log(result);
+    }
+
+
+    // Immediately Invoked Function Expression (IIFE) to initialize 'nanoAPI'
+    analyzeButton.addEventListener("click", async () => textRewriter(reviewText.value));
+
+    (async () => {
+      nanoAPI = await ai.rewriter.create({
+        sharedContext: config.sharedContext,
+      });
+    })();
+  </script>
+
+  </script>
+
+</body>
+
+</html>
